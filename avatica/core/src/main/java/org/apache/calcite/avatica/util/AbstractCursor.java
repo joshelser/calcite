@@ -177,9 +177,9 @@ public abstract class AbstractCursor implements Cursor {
           (ColumnMetaData.ArrayType) columnMetaData.type;
       final SlotGetter componentGetter = new SlotGetter();
       final Accessor componentAccessor =
-          createAccessor(ColumnMetaData.dummy(arrayType.component, true),
+          createAccessor(ColumnMetaData.dummy(arrayType.getComponent(), true),
               componentGetter, localCalendar, factory);
-      return new ArrayAccessor(getter, arrayType.component, componentAccessor,
+      return new ArrayAccessor(getter, arrayType.getComponent(), componentAccessor,
           componentGetter, factory);
     case Types.STRUCT:
       switch (columnMetaData.type.rep) {
@@ -201,14 +201,14 @@ public abstract class AbstractCursor implements Cursor {
       }
     case Types.JAVA_OBJECT:
     case Types.OTHER: // e.g. map
-      if (columnMetaData.type.name.startsWith("INTERVAL_")) {
-        int end = columnMetaData.type.name.indexOf("(");
+      if (columnMetaData.type.getName().startsWith("INTERVAL_")) {
+        int end = columnMetaData.type.getName().indexOf("(");
         if (end < 0) {
-          end = columnMetaData.type.name.length();
+          end = columnMetaData.type.getName().length();
         }
         TimeUnitRange range =
             TimeUnitRange.valueOf(
-                columnMetaData.type.name.substring("INTERVAL_".length(), end));
+                columnMetaData.type.getName().substring("INTERVAL_".length(), end));
         if (range.monthly()) {
           return new IntervalYearMonthAccessor(getter, range);
         } else {
@@ -480,8 +480,13 @@ public abstract class AbstractCursor implements Cursor {
     }
 
     public byte getByte() throws SQLException {
-      Byte o = (Byte) getObject();
-      return o == null ? 0 : o;
+      Object obj = getObject();
+      if (null == obj) {
+        return 0;
+      } else if (obj instanceof Integer) {
+        return ((Integer) obj).byteValue();
+      }
+      return (Byte) obj;
     }
 
     public long getLong() throws SQLException {
@@ -499,8 +504,13 @@ public abstract class AbstractCursor implements Cursor {
     }
 
     public short getShort() throws SQLException {
-      Short o = (Short) getObject();
-      return o == null ? 0 : o;
+      Object obj = getObject();
+      if (null == obj) {
+        return 0;
+      } else if (obj instanceof Integer) {
+        return ((Integer) obj).shortValue();
+      }
+      return (Short) obj;
     }
 
     public long getLong() throws SQLException {
@@ -603,8 +613,13 @@ public abstract class AbstractCursor implements Cursor {
     }
 
     public double getDouble() throws SQLException {
-      Double o = (Double) getObject();
-      return o == null ? 0d : o;
+      Object obj = getObject();
+      if (null == obj) {
+        return 0d;
+      } else if (obj instanceof BigDecimal) {
+        return ((BigDecimal) obj).doubleValue();
+      }
+      return (Double) obj;
     }
   }
 
@@ -725,7 +740,11 @@ public abstract class AbstractCursor implements Cursor {
     }
 
     public String getString() throws SQLException {
-      return (String) getObject();
+      final Object obj = getObject();
+      if (obj instanceof String) {
+        return (String) obj;
+      }
+      return null == obj ? null : obj.toString();
     }
 
     @Override public byte[] getBytes() throws SQLException {
@@ -792,7 +811,9 @@ public abstract class AbstractCursor implements Cursor {
       if (obj instanceof ByteString) {
         return ((ByteString) obj).getBytes();
       } else if (obj instanceof String) {
-        return ((String) obj).getBytes(StandardCharsets.UTF_8);
+        //return ((String) obj).getBytes(StandardCharsets.UTF_8);
+        // Damn JSON.
+        return ByteString.parseBase64((String) obj);
       } else if (obj instanceof byte[]) {
         return (byte[]) obj;
       } else {
@@ -1235,7 +1256,7 @@ public abstract class AbstractCursor implements Cursor {
    * Accessor that assumes that the underlying value is an ARRAY;
    * corresponds to {@link java.sql.Types#ARRAY}.
    */
-  static class ArrayAccessor extends AccessorImpl {
+  public static class ArrayAccessor extends AccessorImpl {
     final ColumnMetaData.AvaticaType componentType;
     final Accessor componentAccessor;
     final SlotGetter componentSlotGetter;
@@ -1253,16 +1274,73 @@ public abstract class AbstractCursor implements Cursor {
 
     @Override public Object getObject() throws SQLException {
       final Object object = super.getObject();
-      if (object == null || object instanceof List) {
+      if (object == null) {
         return object;
+      } else if (object instanceof List) {
+        // Run the array values through the component accessor
+        List<Object> convertedValues = new ArrayList<>(((List<?>) object).size());
+        for (Object val : (List<?>) object) {
+          if (null == val) {
+            convertedValues.add(null);
+          } else {
+            // Set the current value in the SlotGetter so we can use the Accessor to coerce it.
+            componentSlotGetter.slot = val;
+            convertedValues.add(convertValue());
+          }
+        }
+        return convertedValues;
       }
-      // The object can be java array in case of user-provided class for row
-      // storage.
+      // The object can be java array in case of user-provided class for row storage.
       return AvaticaUtils.primitiveList(object);
     }
 
+    private Object convertValue() throws SQLException {
+      switch (componentType.id) {
+      case Types.BOOLEAN:
+      case Types.BIT:
+        return componentAccessor.getBoolean();
+      case Types.TINYINT:
+        return componentAccessor.getByte();
+      case Types.SMALLINT:
+        return componentAccessor.getShort();
+      case Types.INTEGER:
+        return componentAccessor.getInt();
+      case Types.BIGINT:
+        return componentAccessor.getLong();
+      case Types.FLOAT:
+        return componentAccessor.getFloat();
+      case Types.DOUBLE:
+        return componentAccessor.getDouble();
+      case Types.ARRAY:
+        return componentAccessor.getArray();
+      case Types.CHAR:
+      case Types.VARCHAR:
+      case Types.LONGVARCHAR:
+      case Types.NCHAR:
+      case Types.LONGNVARCHAR:
+        return componentAccessor.getString();
+      case Types.BINARY:
+      case Types.VARBINARY:
+      case Types.LONGVARBINARY:
+        return componentAccessor.getBytes();
+      case Types.DECIMAL:
+        return componentAccessor.getBigDecimal();
+      case Types.DATE:
+        return componentAccessor.getObject();
+      case Types.TIME:
+        return componentAccessor.getObject();
+      case Types.TIMESTAMP:
+        return componentAccessor.getObject();
+      case Types.STRUCT:
+        return componentAccessor.getObject();
+      default:
+        throw new IllegalStateException("Unhandled ARRAY component type: " + componentType.rep
+            + ", id: " + componentType.id);
+      }
+    }
+
     @Override public Array getArray() throws SQLException {
-      final List list = (List) getObject();
+      final List<?> list = (List<?>) getObject();
       if (list == null) {
         return null;
       }

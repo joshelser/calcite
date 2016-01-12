@@ -37,6 +37,7 @@ import org.apache.calcite.avatica.remote.ProtobufMeta;
 import org.apache.calcite.avatica.remote.TypedValue;
 import org.apache.calcite.avatica.util.Unsafe;
 
+import com.google.common.base.Optional;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
@@ -805,7 +806,7 @@ public class JdbcMeta implements ProtobufMeta {
         return Frame.EMPTY;
       } else {
         return JdbcResultSet.frame(statementInfo, statementInfo.getResultSet(), offset,
-            fetchMaxRowCount, calendar);
+            fetchMaxRowCount, calendar, Optional.<Meta.Signature>absent());
       }
     } catch (SQLException e) {
       throw propagate(e);

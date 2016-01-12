@@ -38,7 +38,7 @@ public class ArrayImpl implements Array {
   }
 
   public String getBaseTypeName() throws SQLException {
-    return accessor.componentType.name;
+    return accessor.componentType.getName();
   }
 
   public int getBaseType() throws SQLException {
@@ -46,7 +46,7 @@ public class ArrayImpl implements Array {
   }
 
   public Object getArray() throws SQLException {
-    return getArray(list);
+    return getArray(list, accessor);
   }
 
   @Override public String toString() {
@@ -93,9 +93,10 @@ public class ArrayImpl implements Array {
    * @throws NullPointerException if any element is null
    */
   @SuppressWarnings("unchecked")
-  protected Object getArray(List list) throws SQLException {
+  protected Object getArray(List list, AbstractCursor.ArrayAccessor arrayAccessor)
+      throws SQLException {
     int i = 0;
-    switch (accessor.componentType.rep) {
+    switch (arrayAccessor.componentType.rep) {
     case PRIMITIVE_DOUBLE:
       final double[] doubles = new double[list.size()];
       for (double v : (List<Double>) list) {
@@ -148,15 +149,29 @@ public class ArrayImpl implements Array {
       // fall through
     }
     final Object[] objects = list.toArray();
-    switch (accessor.componentType.id) {
+    switch (arrayAccessor.componentType.id) {
     case Types.ARRAY:
       final AbstractCursor.ArrayAccessor componentAccessor =
-          (AbstractCursor.ArrayAccessor) accessor.componentAccessor;
+          (AbstractCursor.ArrayAccessor) arrayAccessor.componentAccessor;
       for (i = 0; i < objects.length; i++) {
-        objects[i] = new ArrayImpl((List) objects[i], componentAccessor);
+        // Convert the element into a Object[] or primitive array, recurse!
+        objects[i] = getArrayData(objects[i], componentAccessor);
       }
     }
     return objects;
+  }
+
+  @SuppressWarnings("rawtypes")
+  Object getArrayData(Object o, AbstractCursor.ArrayAccessor componentAccessor)
+      throws SQLException {
+    if (o instanceof List) {
+      return getArray((List) o, componentAccessor);
+    } else if (o instanceof ArrayImpl) {
+      ArrayImpl subArrayImpl = (ArrayImpl) o;
+      // Either an Object[] or primitive array
+      return subArrayImpl.getArray();
+    }
+    throw new RuntimeException("Unhandled");
   }
 
   public Object getArray(Map<String, Class<?>> map) throws SQLException {
@@ -164,7 +179,7 @@ public class ArrayImpl implements Array {
   }
 
   public Object getArray(long index, int count) throws SQLException {
-    return getArray(list.subList((int) index, count));
+    return getArray(list.subList((int) index, count), accessor);
   }
 
   public Object getArray(long index, int count, Map<String, Class<?>> map)

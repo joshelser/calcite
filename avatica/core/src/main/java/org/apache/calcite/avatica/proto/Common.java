@@ -14535,6 +14535,50 @@ public final class Common {
      * <code>optional bool null = 7;</code>
      */
     boolean getNull();
+
+    /**
+     * <pre>
+     * The Array
+     * </pre>
+     *
+     * <code>repeated .TypedValue array_value = 8;</code>
+     */
+    java.util.List<org.apache.calcite.avatica.proto.Common.TypedValue> 
+        getArrayValueList();
+    /**
+     * <pre>
+     * The Array
+     * </pre>
+     *
+     * <code>repeated .TypedValue array_value = 8;</code>
+     */
+    org.apache.calcite.avatica.proto.Common.TypedValue getArrayValue(int index);
+    /**
+     * <pre>
+     * The Array
+     * </pre>
+     *
+     * <code>repeated .TypedValue array_value = 8;</code>
+     */
+    int getArrayValueCount();
+    /**
+     * <pre>
+     * The Array
+     * </pre>
+     *
+     * <code>repeated .TypedValue array_value = 8;</code>
+     */
+    java.util.List<? extends org.apache.calcite.avatica.proto.Common.TypedValueOrBuilder> 
+        getArrayValueOrBuilderList();
+    /**
+     * <pre>
+     * The Array
+     * </pre>
+     *
+     * <code>repeated .TypedValue array_value = 8;</code>
+     */
+    org.apache.calcite.avatica.proto.Common.TypedValueOrBuilder getArrayValueOrBuilder(
+        int index);
   }
   /**
    * <pre>
@@ -14559,6 +14603,7 @@ public final class Common {
       bytesValue_ = com.google.protobuf.ByteString.EMPTY;
       doubleValue_ = 0D;
       null_ = false;
+      arrayValue_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -14623,6 +14668,15 @@ public final class Common {
               null_ = input.readBool();
               break;
             }
+            case 66: {
+              if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+                arrayValue_ = new java.util.ArrayList<org.apache.calcite.avatica.proto.Common.TypedValue>();
+                mutable_bitField0_ |= 0x00000080;
+              }
+              arrayValue_.add(
+                  input.readMessage(org.apache.calcite.avatica.proto.Common.TypedValue.parser(), extensionRegistry));
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -14631,6 +14685,9 @@ public final class Common {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+          arrayValue_ = java.util.Collections.unmodifiableList(arrayValue_);
+        }
         makeExtensionsImmutable();
       }
     }
@@ -14646,6 +14703,7 @@ public final class Common {
               org.apache.calcite.avatica.proto.Common.TypedValue.class, org.apache.calcite.avatica.proto.Common.TypedValue.Builder.class);
     }
 
+    private int bitField0_;
     public static final int TYPE_FIELD_NUMBER = 1;
     private int type_;
     /**
@@ -14777,6 +14835,61 @@ public final class Common {
       return null_;
     }
 
+    public static final int ARRAY_VALUE_FIELD_NUMBER = 8;
+    private java.util.List<org.apache.calcite.avatica.proto.Common.TypedValue> arrayValue_;
+    /**
+     * <pre>
+     * The Array
+     * </pre>
+     *
+     * <code>repeated .TypedValue array_value = 8;</code>
+     */
+    public java.util.List<org.apache.calcite.avatica.proto.Common.TypedValue> getArrayValueList() {
+      return arrayValue_;
+    }
+    /**
+     * <pre>
+     * The Array
+     * </pre>
+     *
+     * <code>repeated .TypedValue array_value = 8;</code>
+     */
+    public java.util.List<? extends org.apache.calcite.avatica.proto.Common.TypedValueOrBuilder> 
+        getArrayValueOrBuilderList() {
+      return arrayValue_;
+    }
+    /**
+     * <pre>
+     * The Array
+     * </pre>
+     *
+     * <code>repeated .TypedValue array_value = 8;</code>
+     */
+    public int getArrayValueCount() {
+      return arrayValue_.size();
+    }
+    /**
+     * <pre>
+     * The Array
+     * </pre>
+     *
+     * <code>repeated .TypedValue array_value = 8;</code>
+     */
+    public org.apache.calcite.avatica.proto.Common.TypedValue getArrayValue(int index) {
+      return arrayValue_.get(index);
+    }
+    /**
+     * <pre>
+     * The Array
+     * </pre>
+     *
+     * <code>repeated .TypedValue array_value = 8;</code>
+     */
+    public org.apache.calcite.avatica.proto.Common.TypedValueOrBuilder getArrayValueOrBuilder(
+        int index) {
+      return arrayValue_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -14809,6 +14922,9 @@ public final class Common {
       }
       if (null_ != false) {
         output.writeBool(7, null_);
+      }
+      for (int i = 0; i < arrayValue_.size(); i++) {
+        output.writeMessage(8, arrayValue_.get(i));
       }
     }
 
@@ -14844,6 +14960,10 @@ public final class Common {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(7, null_);
       }
+      for (int i = 0; i < arrayValue_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(8, arrayValue_.get(i));
+      }
       memoizedSize = size;
       return size;
     }
@@ -14875,6 +14995,8 @@ public final class Common {
               other.getDoubleValue()));
       result = result && (getNull()
           == other.getNull());
+      result = result && getArrayValueList()
+          .equals(other.getArrayValueList());
       return result;
     }
 
@@ -14903,6 +15025,10 @@ public final class Common {
       hash = (37 * hash) + NULL_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
           getNull());
+      if (getArrayValueCount() > 0) {
+        hash = (37 * hash) + ARRAY_VALUE_FIELD_NUMBER;
+        hash = (53 * hash) + getArrayValueList().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -15021,6 +15147,7 @@ public final class Common {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
+          getArrayValueFieldBuilder();
         }
       }
       public Builder clear() {
@@ -15039,6 +15166,12 @@ public final class Common {
 
         null_ = false;
 
+        if (arrayValueBuilder_ == null) {
+          arrayValue_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000080);
+        } else {
+          arrayValueBuilder_.clear();
+        }
         return this;
       }
 
@@ -15061,6 +15194,8 @@ public final class Common {
 
       public org.apache.calcite.avatica.proto.Common.TypedValue buildPartial() {
         org.apache.calcite.avatica.proto.Common.TypedValue result = new org.apache.calcite.avatica.proto.Common.TypedValue(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         result.type_ = type_;
         result.boolValue_ = boolValue_;
         result.stringValue_ = stringValue_;
@@ -15068,6 +15203,16 @@ public final class Common {
         result.bytesValue_ = bytesValue_;
         result.doubleValue_ = doubleValue_;
         result.null_ = null_;
+        if (arrayValueBuilder_ == null) {
+          if (((bitField0_ & 0x00000080) == 0x00000080)) {
+            arrayValue_ = java.util.Collections.unmodifiableList(arrayValue_);
+            bitField0_ = (bitField0_ & ~0x00000080);
+          }
+          result.arrayValue_ = arrayValue_;
+        } else {
+          result.arrayValue_ = arrayValueBuilder_.build();
+        }
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -15131,6 +15276,32 @@ public final class Common {
         if (other.getNull() != false) {
           setNull(other.getNull());
         }
+        if (arrayValueBuilder_ == null) {
+          if (!other.arrayValue_.isEmpty()) {
+            if (arrayValue_.isEmpty()) {
+              arrayValue_ = other.arrayValue_;
+              bitField0_ = (bitField0_ & ~0x00000080);
+            } else {
+              ensureArrayValueIsMutable();
+              arrayValue_.addAll(other.arrayValue_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.arrayValue_.isEmpty()) {
+            if (arrayValueBuilder_.isEmpty()) {
+              arrayValueBuilder_.dispose();
+              arrayValueBuilder_ = null;
+              arrayValue_ = other.arrayValue_;
+              bitField0_ = (bitField0_ & ~0x00000080);
+              arrayValueBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getArrayValueFieldBuilder() : null;
+            } else {
+              arrayValueBuilder_.addAllMessages(other.arrayValue_);
+            }
+          }
+        }
         onChanged();
         return this;
       }
@@ -15156,6 +15327,7 @@ public final class Common {
         }
         return this;
       }
+      private int bitField0_;
 
       private int type_ = 0;
       /**
@@ -15501,6 +15673,318 @@ public final class Common {
         null_ = false;
         onChanged();
         return this;
+      }
+
+      private java.util.List<org.apache.calcite.avatica.proto.Common.TypedValue> arrayValue_ =
+        java.util.Collections.emptyList();
+      private void ensureArrayValueIsMutable() {
+        if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+          arrayValue_ = new java.util.ArrayList<org.apache.calcite.avatica.proto.Common.TypedValue>(arrayValue_);
+          bitField0_ |= 0x00000080;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          org.apache.calcite.avatica.proto.Common.TypedValue, org.apache.calcite.avatica.proto.Common.TypedValue.Builder, org.apache.calcite.avatica.proto.Common.TypedValueOrBuilder> arrayValueBuilder_;
+
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public java.util.List<org.apache.calcite.avatica.proto.Common.TypedValue> getArrayValueList() {
+        if (arrayValueBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(arrayValue_);
+        } else {
+          return arrayValueBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public int getArrayValueCount() {
+        if (arrayValueBuilder_ == null) {
+          return arrayValue_.size();
+        } else {
+          return arrayValueBuilder_.getCount();
+        }
+      }
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public org.apache.calcite.avatica.proto.Common.TypedValue getArrayValue(int index) {
+        if (arrayValueBuilder_ == null) {
+          return arrayValue_.get(index);
+        } else {
+          return arrayValueBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public Builder setArrayValue(
+          int index, org.apache.calcite.avatica.proto.Common.TypedValue value) {
+        if (arrayValueBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureArrayValueIsMutable();
+          arrayValue_.set(index, value);
+          onChanged();
+        } else {
+          arrayValueBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public Builder setArrayValue(
+          int index, org.apache.calcite.avatica.proto.Common.TypedValue.Builder builderForValue) {
+        if (arrayValueBuilder_ == null) {
+          ensureArrayValueIsMutable();
+          arrayValue_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          arrayValueBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public Builder addArrayValue(org.apache.calcite.avatica.proto.Common.TypedValue value) {
+        if (arrayValueBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureArrayValueIsMutable();
+          arrayValue_.add(value);
+          onChanged();
+        } else {
+          arrayValueBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public Builder addArrayValue(
+          int index, org.apache.calcite.avatica.proto.Common.TypedValue value) {
+        if (arrayValueBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureArrayValueIsMutable();
+          arrayValue_.add(index, value);
+          onChanged();
+        } else {
+          arrayValueBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public Builder addArrayValue(
+          org.apache.calcite.avatica.proto.Common.TypedValue.Builder builderForValue) {
+        if (arrayValueBuilder_ == null) {
+          ensureArrayValueIsMutable();
+          arrayValue_.add(builderForValue.build());
+          onChanged();
+        } else {
+          arrayValueBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public Builder addArrayValue(
+          int index, org.apache.calcite.avatica.proto.Common.TypedValue.Builder builderForValue) {
+        if (arrayValueBuilder_ == null) {
+          ensureArrayValueIsMutable();
+          arrayValue_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          arrayValueBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public Builder addAllArrayValue(
+          java.lang.Iterable<? extends org.apache.calcite.avatica.proto.Common.TypedValue> values) {
+        if (arrayValueBuilder_ == null) {
+          ensureArrayValueIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, arrayValue_);
+          onChanged();
+        } else {
+          arrayValueBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public Builder clearArrayValue() {
+        if (arrayValueBuilder_ == null) {
+          arrayValue_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000080);
+          onChanged();
+        } else {
+          arrayValueBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public Builder removeArrayValue(int index) {
+        if (arrayValueBuilder_ == null) {
+          ensureArrayValueIsMutable();
+          arrayValue_.remove(index);
+          onChanged();
+        } else {
+          arrayValueBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public org.apache.calcite.avatica.proto.Common.TypedValue.Builder getArrayValueBuilder(
+          int index) {
+        return getArrayValueFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public org.apache.calcite.avatica.proto.Common.TypedValueOrBuilder getArrayValueOrBuilder(
+          int index) {
+        if (arrayValueBuilder_ == null) {
+          return arrayValue_.get(index);  } else {
+          return arrayValueBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public java.util.List<? extends org.apache.calcite.avatica.proto.Common.TypedValueOrBuilder> 
+           getArrayValueOrBuilderList() {
+        if (arrayValueBuilder_ != null) {
+          return arrayValueBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(arrayValue_);
+        }
+      }
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public org.apache.calcite.avatica.proto.Common.TypedValue.Builder addArrayValueBuilder() {
+        return getArrayValueFieldBuilder().addBuilder(
+            org.apache.calcite.avatica.proto.Common.TypedValue.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public org.apache.calcite.avatica.proto.Common.TypedValue.Builder addArrayValueBuilder(
+          int index) {
+        return getArrayValueFieldBuilder().addBuilder(
+            index, org.apache.calcite.avatica.proto.Common.TypedValue.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * The Array
+       * </pre>
+       *
+       * <code>repeated .TypedValue array_value = 8;</code>
+       */
+      public java.util.List<org.apache.calcite.avatica.proto.Common.TypedValue.Builder> 
+           getArrayValueBuilderList() {
+        return getArrayValueFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          org.apache.calcite.avatica.proto.Common.TypedValue, org.apache.calcite.avatica.proto.Common.TypedValue.Builder, org.apache.calcite.avatica.proto.Common.TypedValueOrBuilder> 
+          getArrayValueFieldBuilder() {
+        if (arrayValueBuilder_ == null) {
+          arrayValueBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              org.apache.calcite.avatica.proto.Common.TypedValue, org.apache.calcite.avatica.proto.Common.TypedValue.Builder, org.apache.calcite.avatica.proto.Common.TypedValueOrBuilder>(
+                  arrayValue_,
+                  ((bitField0_ & 0x00000080) == 0x00000080),
+                  getParentForChildren(),
+                  isClean());
+          arrayValue_ = null;
+        }
+        return arrayValueBuilder_;
       }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -18158,58 +18642,59 @@ public final class Common {
       " \001(\014\"\207\001\n\013ColumnValue\022\032\n\005value\030\001 \003(\0132\013.Ty",
       "pedValue\022 \n\013array_value\030\002 \003(\0132\013.TypedVal" +
       "ue\022\027\n\017has_array_value\030\003 \001(\010\022!\n\014scalar_va" +
-      "lue\030\004 \001(\0132\013.TypedValue\"\231\001\n\nTypedValue\022\022\n" +
+      "lue\030\004 \001(\0132\013.TypedValue\"\273\001\n\nTypedValue\022\022\n" +
       "\004type\030\001 \001(\0162\004.Rep\022\022\n\nbool_value\030\002 \001(\010\022\024\n" +
       "\014string_value\030\003 \001(\t\022\024\n\014number_value\030\004 \001(" +
       "\022\022\023\n\013bytes_value\030\005 \001(\014\022\024\n\014double_value\030\006" +
-      " \001(\001\022\014\n\004null\030\007 \001(\010\"\246\002\n\031MetaDataOperation" +
-      "Argument\022\024\n\014string_value\030\001 \001(\t\022\022\n\nbool_v" +
-      "alue\030\002 \001(\010\022\021\n\tint_value\030\003 \001(\021\022\033\n\023string_" +
-      "array_values\030\004 \003(\t\022\030\n\020int_array_values\030\005",
-      " \003(\021\0225\n\004type\030\006 \001(\0162\'.MetaDataOperationAr" +
-      "gument.ArgumentType\"^\n\014ArgumentType\022\n\n\006S" +
-      "TRING\020\000\022\010\n\004BOOL\020\001\022\007\n\003INT\020\002\022\023\n\017REPEATED_S" +
-      "TRING\020\003\022\020\n\014REPEATED_INT\020\004\022\010\n\004NULL\020\005\"\260\001\n\n" +
-      "QueryState\022\030\n\004type\030\001 \001(\0162\n.StateType\022\013\n\003" +
-      "sql\030\002 \001(\t\022\036\n\002op\030\003 \001(\0162\022.MetaDataOperatio" +
-      "n\022(\n\004args\030\004 \003(\0132\032.MetaDataOperationArgum" +
-      "ent\022\020\n\010has_args\030\005 \001(\010\022\017\n\007has_sql\030\006 \001(\010\022\016" +
-      "\n\006has_op\030\007 \001(\010*\237\001\n\rStatementType\022\n\n\006SELE" +
-      "CT\020\000\022\n\n\006INSERT\020\001\022\n\n\006UPDATE\020\002\022\n\n\006DELETE\020\003",
-      "\022\n\n\006UPSERT\020\004\022\t\n\005MERGE\020\005\022\r\n\tOTHER_DML\020\006\022\n" +
-      "\n\006CREATE\020\007\022\010\n\004DROP\020\010\022\t\n\005ALTER\020\t\022\r\n\tOTHER" +
-      "_DDL\020\n\022\010\n\004CALL\020\013*\342\003\n\003Rep\022\025\n\021PRIMITIVE_BO" +
-      "OLEAN\020\000\022\022\n\016PRIMITIVE_BYTE\020\001\022\022\n\016PRIMITIVE" +
-      "_CHAR\020\002\022\023\n\017PRIMITIVE_SHORT\020\003\022\021\n\rPRIMITIV" +
-      "E_INT\020\004\022\022\n\016PRIMITIVE_LONG\020\005\022\023\n\017PRIMITIVE" +
-      "_FLOAT\020\006\022\024\n\020PRIMITIVE_DOUBLE\020\007\022\013\n\007BOOLEA" +
-      "N\020\010\022\010\n\004BYTE\020\t\022\r\n\tCHARACTER\020\n\022\t\n\005SHORT\020\013\022" +
-      "\013\n\007INTEGER\020\014\022\010\n\004LONG\020\r\022\t\n\005FLOAT\020\016\022\n\n\006DOU" +
-      "BLE\020\017\022\017\n\013BIG_INTEGER\020\031\022\017\n\013BIG_DECIMAL\020\032\022",
-      "\021\n\rJAVA_SQL_TIME\020\020\022\026\n\022JAVA_SQL_TIMESTAMP" +
-      "\020\021\022\021\n\rJAVA_SQL_DATE\020\022\022\022\n\016JAVA_UTIL_DATE\020" +
-      "\023\022\017\n\013BYTE_STRING\020\024\022\n\n\006STRING\020\025\022\n\n\006NUMBER" +
-      "\020\026\022\n\n\006OBJECT\020\027\022\010\n\004NULL\020\030\022\t\n\005ARRAY\020\033\022\n\n\006S" +
-      "TRUCT\020\034\022\014\n\010MULTISET\020\035*^\n\010Severity\022\024\n\020UNK" +
-      "NOWN_SEVERITY\020\000\022\022\n\016FATAL_SEVERITY\020\001\022\022\n\016E" +
-      "RROR_SEVERITY\020\002\022\024\n\020WARNING_SEVERITY\020\003*\327\004" +
-      "\n\021MetaDataOperation\022\022\n\016GET_ATTRIBUTES\020\000\022" +
-      "\033\n\027GET_BEST_ROW_IDENTIFIER\020\001\022\020\n\014GET_CATA" +
-      "LOGS\020\002\022\036\n\032GET_CLIENT_INFO_PROPERTIES\020\003\022\031",
-      "\n\025GET_COLUMN_PRIVILEGES\020\004\022\017\n\013GET_COLUMNS" +
-      "\020\005\022\027\n\023GET_CROSS_REFERENCE\020\006\022\025\n\021GET_EXPOR" +
-      "TED_KEYS\020\007\022\030\n\024GET_FUNCTION_COLUMNS\020\010\022\021\n\r" +
-      "GET_FUNCTIONS\020\t\022\025\n\021GET_IMPORTED_KEYS\020\n\022\022" +
-      "\n\016GET_INDEX_INFO\020\013\022\024\n\020GET_PRIMARY_KEYS\020\014" +
-      "\022\031\n\025GET_PROCEDURE_COLUMNS\020\r\022\022\n\016GET_PROCE" +
-      "DURES\020\016\022\026\n\022GET_PSEUDO_COLUMNS\020\017\022\017\n\013GET_S" +
-      "CHEMAS\020\020\022\031\n\025GET_SCHEMAS_WITH_ARGS\020\021\022\024\n\020G" +
-      "ET_SUPER_TABLES\020\022\022\023\n\017GET_SUPER_TYPES\020\023\022\030" +
-      "\n\024GET_TABLE_PRIVILEGES\020\024\022\016\n\nGET_TABLES\020\025",
-      "\022\023\n\017GET_TABLE_TYPES\020\026\022\021\n\rGET_TYPE_INFO\020\027" +
-      "\022\014\n\010GET_UDTS\020\030\022\027\n\023GET_VERSION_COLUMNS\020\031*" +
-      "\"\n\tStateType\022\007\n\003SQL\020\000\022\014\n\010METADATA\020\001B\"\n o" +
-      "rg.apache.calcite.avatica.protob\006proto3"
+      " \001(\001\022\014\n\004null\030\007 \001(\010\022 \n\013array_value\030\010 \003(\0132" +
+      "\013.TypedValue\"\246\002\n\031MetaDataOperationArgume" +
+      "nt\022\024\n\014string_value\030\001 \001(\t\022\022\n\nbool_value\030\002" +
+      " \001(\010\022\021\n\tint_value\030\003 \001(\021\022\033\n\023string_array_",
+      "values\030\004 \003(\t\022\030\n\020int_array_values\030\005 \003(\021\0225" +
+      "\n\004type\030\006 \001(\0162\'.MetaDataOperationArgument" +
+      ".ArgumentType\"^\n\014ArgumentType\022\n\n\006STRING\020" +
+      "\000\022\010\n\004BOOL\020\001\022\007\n\003INT\020\002\022\023\n\017REPEATED_STRING\020" +
+      "\003\022\020\n\014REPEATED_INT\020\004\022\010\n\004NULL\020\005\"\260\001\n\nQueryS" +
+      "tate\022\030\n\004type\030\001 \001(\0162\n.StateType\022\013\n\003sql\030\002 " +
+      "\001(\t\022\036\n\002op\030\003 \001(\0162\022.MetaDataOperation\022(\n\004a" +
+      "rgs\030\004 \003(\0132\032.MetaDataOperationArgument\022\020\n" +
+      "\010has_args\030\005 \001(\010\022\017\n\007has_sql\030\006 \001(\010\022\016\n\006has_" +
+      "op\030\007 \001(\010*\237\001\n\rStatementType\022\n\n\006SELECT\020\000\022\n",
+      "\n\006INSERT\020\001\022\n\n\006UPDATE\020\002\022\n\n\006DELETE\020\003\022\n\n\006UP" +
+      "SERT\020\004\022\t\n\005MERGE\020\005\022\r\n\tOTHER_DML\020\006\022\n\n\006CREA" +
+      "TE\020\007\022\010\n\004DROP\020\010\022\t\n\005ALTER\020\t\022\r\n\tOTHER_DDL\020\n" +
+      "\022\010\n\004CALL\020\013*\342\003\n\003Rep\022\025\n\021PRIMITIVE_BOOLEAN\020" +
+      "\000\022\022\n\016PRIMITIVE_BYTE\020\001\022\022\n\016PRIMITIVE_CHAR\020" +
+      "\002\022\023\n\017PRIMITIVE_SHORT\020\003\022\021\n\rPRIMITIVE_INT\020" +
+      "\004\022\022\n\016PRIMITIVE_LONG\020\005\022\023\n\017PRIMITIVE_FLOAT" +
+      "\020\006\022\024\n\020PRIMITIVE_DOUBLE\020\007\022\013\n\007BOOLEAN\020\010\022\010\n" +
+      "\004BYTE\020\t\022\r\n\tCHARACTER\020\n\022\t\n\005SHORT\020\013\022\013\n\007INT" +
+      "EGER\020\014\022\010\n\004LONG\020\r\022\t\n\005FLOAT\020\016\022\n\n\006DOUBLE\020\017\022",
+      "\017\n\013BIG_INTEGER\020\031\022\017\n\013BIG_DECIMAL\020\032\022\021\n\rJAV" +
+      "A_SQL_TIME\020\020\022\026\n\022JAVA_SQL_TIMESTAMP\020\021\022\021\n\r" +
+      "JAVA_SQL_DATE\020\022\022\022\n\016JAVA_UTIL_DATE\020\023\022\017\n\013B" +
+      "YTE_STRING\020\024\022\n\n\006STRING\020\025\022\n\n\006NUMBER\020\026\022\n\n\006" +
+      "OBJECT\020\027\022\010\n\004NULL\020\030\022\t\n\005ARRAY\020\033\022\n\n\006STRUCT\020" +
+      "\034\022\014\n\010MULTISET\020\035*^\n\010Severity\022\024\n\020UNKNOWN_S" +
+      "EVERITY\020\000\022\022\n\016FATAL_SEVERITY\020\001\022\022\n\016ERROR_S" +
+      "EVERITY\020\002\022\024\n\020WARNING_SEVERITY\020\003*\327\004\n\021Meta" +
+      "DataOperation\022\022\n\016GET_ATTRIBUTES\020\000\022\033\n\027GET" +
+      "_BEST_ROW_IDENTIFIER\020\001\022\020\n\014GET_CATALOGS\020\002",
+      "\022\036\n\032GET_CLIENT_INFO_PROPERTIES\020\003\022\031\n\025GET_" +
+      "COLUMN_PRIVILEGES\020\004\022\017\n\013GET_COLUMNS\020\005\022\027\n\023" +
+      "GET_CROSS_REFERENCE\020\006\022\025\n\021GET_EXPORTED_KE" +
+      "YS\020\007\022\030\n\024GET_FUNCTION_COLUMNS\020\010\022\021\n\rGET_FU" +
+      "NCTIONS\020\t\022\025\n\021GET_IMPORTED_KEYS\020\n\022\022\n\016GET_" +
+      "INDEX_INFO\020\013\022\024\n\020GET_PRIMARY_KEYS\020\014\022\031\n\025GE" +
+      "T_PROCEDURE_COLUMNS\020\r\022\022\n\016GET_PROCEDURES\020" +
+      "\016\022\026\n\022GET_PSEUDO_COLUMNS\020\017\022\017\n\013GET_SCHEMAS" +
+      "\020\020\022\031\n\025GET_SCHEMAS_WITH_ARGS\020\021\022\024\n\020GET_SUP" +
+      "ER_TABLES\020\022\022\023\n\017GET_SUPER_TYPES\020\023\022\030\n\024GET_",
+      "TABLE_PRIVILEGES\020\024\022\016\n\nGET_TABLES\020\025\022\023\n\017GE" +
+      "T_TABLE_TYPES\020\026\022\021\n\rGET_TYPE_INFO\020\027\022\014\n\010GE" +
+      "T_UDTS\020\030\022\027\n\023GET_VERSION_COLUMNS\020\031*\"\n\tSta" +
+      "teType\022\007\n\003SQL\020\000\022\014\n\010METADATA\020\001B\"\n org.apa" +
+      "che.calcite.avatica.protob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -18300,7 +18785,7 @@ public final class Common {
     internal_static_TypedValue_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_TypedValue_descriptor,
-        new java.lang.String[] { "Type", "BoolValue", "StringValue", "NumberValue", "BytesValue", "DoubleValue", "Null", });
+        new java.lang.String[] { "Type", "BoolValue", "StringValue", "NumberValue", "BytesValue", "DoubleValue", "Null", "ArrayValue", });
     internal_static_MetaDataOperationArgument_descriptor =
       getDescriptor().getMessageTypes().get(13);
     internal_static_MetaDataOperationArgument_fieldAccessorTable = new
