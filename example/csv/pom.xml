@@ -78,6 +78,23 @@ limitations under the License.
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <configuration>
+            <excludes>
+              <!-- The following files have file formats that do not
+                   admit comments, and therefore cannot contain
+                   license notices. -->
+              <exclude>src/test/resources/**/*.csv</exclude>
+              <exclude>src/test/resources/bug/archers.json</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

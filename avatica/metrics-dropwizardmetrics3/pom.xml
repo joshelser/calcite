@@ -85,6 +85,18 @@ limitations under the License.
       </plugins>
     </pluginManagement>
     <plugins>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <!-- The following files have file formats that do not
+                 admit comments, and therefore cannot contain
+                 license notices. -->
+            <exclude>src/main/resources/META-INF/services/org.apache.calcite.avatica.metrics.MetricsSystemFactory</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
       <!-- Parent module has the same plugin and does the work of
            generating -sources.jar for each project. But without the
            plugin declared here, IDEs don't know the sources are
