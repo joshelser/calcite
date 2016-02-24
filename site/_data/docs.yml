@@ -33,6 +33,7 @@
   - avatica_roadmap
   - avatica_json_reference
   - avatica_protobuf_reference
+  - avatica_example_client
 
 - title: Reference
   docs:
