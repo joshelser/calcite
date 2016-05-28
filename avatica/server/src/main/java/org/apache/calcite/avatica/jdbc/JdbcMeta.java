@@ -912,7 +912,7 @@ public class JdbcMeta implements ProtobufMeta {
       }
 
       // Execute the batch and return the results
-      return new ExecuteBatchResult(stmt.executeBatch());
+      return new ExecuteBatchResult(AvaticaUtils.executeLargeBatch(stmt));
     } catch (SQLException e) {
       throw propagate(e);
     }
@@ -944,7 +944,7 @@ public class JdbcMeta implements ProtobufMeta {
         }
         preparedStmt.addBatch();
       }
-      return new ExecuteBatchResult(preparedStmt.executeBatch());
+      return new ExecuteBatchResult(AvaticaUtils.executeLargeBatch(preparedStmt));
     } catch (SQLException e) {
       throw propagate(e);
     }
@@ -967,7 +967,7 @@ public class JdbcMeta implements ProtobufMeta {
         }
         preparedStmt.addBatch();
       }
-      return new ExecuteBatchResult(preparedStmt.executeBatch());
+      return new ExecuteBatchResult(AvaticaUtils.executeLargeBatch(preparedStmt));
     } catch (SQLException e) {
       throw propagate(e);
     }
