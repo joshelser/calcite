@@ -16,6 +16,15 @@
  */
 package org.apache.calcite.avatica.remote;
 
+import java.io.File;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Objects;
+
+import javax.net.ssl.SSLContext;
+
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthSchemeProvider;
 import org.apache.http.auth.AuthScope;
@@ -25,9 +34,12 @@ import org.apache.http.client.config.AuthSchemes;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.client.protocol.RequestExpectContinue;
 import org.apache.http.config.Lookup;
 import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.auth.BasicSchemeFactory;
@@ -37,22 +49,10 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.protocol.HttpProcessor;
-import org.apache.http.protocol.HttpProcessorBuilder;
-import org.apache.http.protocol.HttpRequestExecutor;
-import org.apache.http.protocol.RequestConnControl;
-import org.apache.http.protocol.RequestContent;
-import org.apache.http.protocol.RequestTargetHost;
+import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Objects;
 
 /**
  * A common class to invoke HTTP requests against the Avatica server agnostic of the data being
@@ -71,8 +71,6 @@ public class AvaticaCommonsHttpClientImpl implements AvaticaHttpClient,
 
   protected final HttpHost host;
   protected final URL url;
-  protected final HttpProcessor httpProcessor;
-  protected final HttpRequestExecutor httpExecutor;
   protected final BasicAuthCache authCache;
   protected final CloseableHttpClient client;
   final PoolingHttpClientConnectionManager pool;
@@ -85,29 +83,39 @@ public class AvaticaCommonsHttpClientImpl implements AvaticaHttpClient,
     this.host = new HttpHost(url.getHost(), url.getPort(), url.getProtocol());
     this.url = Objects.requireNonNull(url);
 
-    this.httpProcessor = HttpProcessorBuilder.create()
-        .add(new RequestContent())
-        .add(new RequestTargetHost())
-        .add(new RequestConnControl())
-        .add(new RequestExpectContinue()).build();
+    try {
+      SSLContext sslcontext = SSLContexts.custom()
+          .loadTrustMaterial(new File("/Users/jelser/store.jks"), "secret".toCharArray(),
+                  new TrustSelfSignedStrategy())
+          .build();
+      @SuppressWarnings("deprecation")
+      SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
+              sslcontext,
+              null,
+              null,
+              SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+  
+      pool = new PoolingHttpClientConnectionManager(RegistryBuilder.<ConnectionSocketFactory>create()
+          .register("http", PlainConnectionSocketFactory.getSocketFactory())
+          .register("https", sslsf)
+          .build());
+      // Increase max total connection to 100
+      final String maxCnxns =
+          System.getProperty(MAX_POOLED_CONNECTIONS_KEY,
+              MAX_POOLED_CONNECTIONS_DEFAULT);
+      pool.setMaxTotal(Integer.parseInt(maxCnxns));
+      // Increase default max connection per route to 25
+      final String maxCnxnsPerRoute = System.getProperty(MAX_POOLED_CONNECTION_PER_ROUTE_KEY,
+          MAX_POOLED_CONNECTION_PER_ROUTE_DEFAULT);
+      pool.setDefaultMaxPerRoute(Integer.parseInt(maxCnxnsPerRoute));
+  
+      this.authCache = new BasicAuthCache();
 
-    this.httpExecutor = new HttpRequestExecutor();
-
-    pool = new PoolingHttpClientConnectionManager();
-    // Increase max total connection to 100
-    final String maxCnxns =
-        System.getProperty(MAX_POOLED_CONNECTIONS_KEY,
-            MAX_POOLED_CONNECTIONS_DEFAULT);
-    pool.setMaxTotal(Integer.parseInt(maxCnxns));
-    // Increase default max connection per route to 25
-    final String maxCnxnsPerRoute = System.getProperty(MAX_POOLED_CONNECTION_PER_ROUTE_KEY,
-        MAX_POOLED_CONNECTION_PER_ROUTE_DEFAULT);
-    pool.setDefaultMaxPerRoute(Integer.parseInt(maxCnxnsPerRoute));
-
-    this.authCache = new BasicAuthCache();
-
-    // A single thread-safe HttpClient, pooling connections via the ConnectionManager
-    this.client = HttpClients.custom().setConnectionManager(pool).build();
+      // A single thread-safe HttpClient, pooling connections via the ConnectionManager
+      this.client = HttpClients.custom().setConnectionManager(pool).build();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public byte[] send(byte[] request) {
