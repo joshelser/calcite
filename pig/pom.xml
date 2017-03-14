@@ -39,7 +39,13 @@ limitations under the License.
     <dependency>
       <groupId>org.apache.calcite</groupId>
       <artifactId>calcite-core</artifactId>
-      <type>jar</type>
+      <exclusions>
+        <!-- exclude the non-shaded Avatica artifact -->
+        <exclusion>
+          <groupId>org.apache.calcite.avatica</groupId>
+          <artifactId>avatica-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.calcite</groupId>
@@ -50,6 +56,11 @@ limitations under the License.
     <dependency>
       <groupId>org.apache.calcite</groupId>
       <artifactId>calcite-linq4j</artifactId>
+    </dependency>
+    <!-- Pull in the shaded Avatica artifact to avoid classpath pollution -->
+    <dependency>
+      <groupId>org.apache.calcite.avatica</groupId>
+      <artifactId>avatica</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.hadoop</groupId>
