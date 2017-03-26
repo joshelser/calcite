@@ -103,6 +103,7 @@ limitations under the License.
 
   <modules>
     <module>core</module>
+    <module>docker</module>
     <module>metrics</module>
     <module>metrics-dropwizardmetrics3</module>
     <module>noop-driver</module>
