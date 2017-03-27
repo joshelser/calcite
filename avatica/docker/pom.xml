@@ -32,6 +32,28 @@ limitations under the License.
     <top.dir>${project.basedir}/..</top.dir>
   </properties>
 
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <!-- Use the execution instead of configuration to bind it to package -->
+        <executions>
+          <execution>
+            <id>binary-assembly</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/docker-files.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
   <profiles>
     <!-- Profile for building official Docker images. Not bound to build phases since that would require anyone build to have the Docker engine installed on their machine -->       
     <profile>                                   
@@ -51,8 +73,8 @@ limitations under the License.
               </execution>
             </executions>
             <configuration>
-              <imageName>avatica-hypersql</imageName>
-              <dockerDirectory>${project.basedir}/src/main/docker/hypersql</dockerDirectory>
+              <imageName>avatica-server</imageName>
+              <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
               <imageTags>
                 <imageTag>${project.build.version}</imageTag>
                 <imageTag>latest</imageTag>

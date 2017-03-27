@@ -17,7 +17,6 @@ FROM avatica-server:latest
 MAINTAINER Apache Avatica <dev@calcite.apache.org>
 
 # Dependencies
-ADD https://repo1.maven.org/maven2/net/hydromatic/scott-data-hsqldb/0.1/scott-data-hsqldb-0.1.jar /home/avatica/classpath/
-ADD https://repo1.maven.org/maven2/org/hsqldb/hsqldb/2.3.1/hsqldb-2.3.1.jar /home/avatica/classpath/
+ADD https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar /root/classpath/
 
-ENTRYPOINT ["/usr/lib/jvm/java-8-openjdk-amd64/bin/java", "-cp", "/home/avatica/classpath/*", "org.apache.calcite.avatica.standalone.StandaloneServer", "-u", "jdbc:hsqldb:res:scott"]
+ENTRYPOINT ["/usr/lib/jvm/java-8-openjdk-amd64/bin/java", "-cp", "/home/avatica/classpath/*", "org.apache.calcite.avatica.standalone.StandaloneServer"]
