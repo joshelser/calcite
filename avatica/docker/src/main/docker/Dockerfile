@@ -29,4 +29,5 @@ RUN chown -R avatica: /home/avatica
 # Expose the default port as a convenience
 EXPOSE 8765
 # Switch off of the root user
-USER avatica
+# TODO Would like to do this, but screws up downstream due to https://github.com/docker/docker/issues/6119
+# USER avatica
