@@ -811,10 +811,10 @@ public abstract class AbstractCursor implements Cursor {
       if (obj instanceof ByteString) {
         return ((ByteString) obj).getBytes();
       } else if (obj instanceof String) {
-        //return ((String) obj).getBytes(StandardCharsets.UTF_8);
-        // Damn JSON.
+        // Need to unwind the base64 for JSON
         return ByteString.parseBase64((String) obj);
       } else if (obj instanceof byte[]) {
+        // Protobuf would have a byte array
         return (byte[]) obj;
       } else {
         throw new RuntimeException("Cannot handle " + obj.getClass() + " as bytes");
@@ -1277,9 +1277,10 @@ public abstract class AbstractCursor implements Cursor {
       if (object == null) {
         return object;
       } else if (object instanceof List) {
+        List<?> list = (List<?>) object;
         // Run the array values through the component accessor
-        List<Object> convertedValues = new ArrayList<>(((List<?>) object).size());
-        for (Object val : (List<?>) object) {
+        List<Object> convertedValues = new ArrayList<>(list.size());
+        for (Object val : list) {
           if (null == val) {
             convertedValues.add(null);
           } else {
@@ -1326,12 +1327,10 @@ public abstract class AbstractCursor implements Cursor {
       case Types.DECIMAL:
         return componentAccessor.getBigDecimal();
       case Types.DATE:
-        return componentAccessor.getObject();
       case Types.TIME:
-        return componentAccessor.getObject();
       case Types.TIMESTAMP:
-        return componentAccessor.getObject();
       case Types.STRUCT:
+      case Types.JAVA_OBJECT:
         return componentAccessor.getObject();
       default:
         throw new IllegalStateException("Unhandled ARRAY component type: " + componentType.rep

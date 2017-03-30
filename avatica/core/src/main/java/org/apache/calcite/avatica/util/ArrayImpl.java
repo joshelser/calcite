@@ -29,10 +29,10 @@ import java.util.Map;
 
 /** Implementation of JDBC {@link Array}. */
 public class ArrayImpl implements Array {
-  private final List list;
+  private final List<?> list;
   private final AbstractCursor.ArrayAccessor accessor;
 
-  public ArrayImpl(List list, AbstractCursor.ArrayAccessor accessor) {
+  public ArrayImpl(List<?> list, AbstractCursor.ArrayAccessor accessor) {
     this.list = list;
     this.accessor = accessor;
   }
@@ -50,7 +50,7 @@ public class ArrayImpl implements Array {
   }
 
   @Override public String toString() {
-    final Iterator iterator = list.iterator();
+    final Iterator<?> iterator = list.iterator();
     if (!iterator.hasNext()) {
       return "[]";
     }
@@ -93,7 +93,7 @@ public class ArrayImpl implements Array {
    * @throws NullPointerException if any element is null
    */
   @SuppressWarnings("unchecked")
-  protected Object getArray(List list, AbstractCursor.ArrayAccessor arrayAccessor)
+  protected Object getArray(List<?> list, AbstractCursor.ArrayAccessor arrayAccessor)
       throws SQLException {
     int i = 0;
     switch (arrayAccessor.componentType.rep) {
@@ -161,11 +161,10 @@ public class ArrayImpl implements Array {
     return objects;
   }
 
-  @SuppressWarnings("rawtypes")
   Object getArrayData(Object o, AbstractCursor.ArrayAccessor componentAccessor)
       throws SQLException {
     if (o instanceof List) {
-      return getArray((List) o, componentAccessor);
+      return getArray((List<?>) o, componentAccessor);
     } else if (o instanceof ArrayImpl) {
       ArrayImpl subArrayImpl = (ArrayImpl) o;
       // Either an Object[] or primitive array
@@ -212,7 +211,7 @@ public class ArrayImpl implements Array {
   /** Factory that can create a result set based on a list of values. */
   public interface Factory {
     ResultSet create(ColumnMetaData.AvaticaType elementType,
-        Iterable<Object> iterable);
+        Iterable<?> iterable);
   }
 }
 

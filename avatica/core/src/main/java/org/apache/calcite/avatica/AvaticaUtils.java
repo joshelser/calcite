@@ -29,7 +29,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.AbstractList;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -132,15 +131,7 @@ public class AvaticaUtils {
    * Adapts a primitive array into a {@link List}. For example,
    * {@code asList(new double[2])} returns a {@code List&lt;Double&gt;}.
    */
-  public static List<?> primitiveList(Object array) {
-    // Work-around for nested arrays
-//    if (array instanceof Object[]) {
-//      return convertArray((Object[]) array);
-//    }
-    return createListFromAssumedArray(array);
-  }
-
-  static List<?> createListFromAssumedArray(final Object array) {
+  public static List<?> primitiveList(final Object array) {
     // REVIEW: A per-type list might be more efficient. (Or might not.)
     return new AbstractList<Object>() {
       public Object get(int index) {
@@ -151,73 +142,6 @@ public class AvaticaUtils {
         return java.lang.reflect.Array.getLength(array);
       }
     };
-  }
-
-  static List<?> convertArray(Object[] array) {
-    Object firstNonNull = findFirstNonNull(array);
-    if (null != firstNonNull) {
-      if (firstNonNull instanceof Object[]) {
-        ArrayList<Object> converted = new ArrayList<>(array.length);
-        for (int i = 0; i < array.length; i++) {
-          Object o = array[i];
-          converted.add(o != null ? convertArray((Object[]) o) : null);
-        }
-        return converted;
-      } else if (firstNonNull instanceof Boolean) {
-        ArrayList<Boolean> boolList = new ArrayList<>(array.length);
-        for (int i = 0; i < array.length; i++) {
-          boolList.add((Boolean) array[i]);
-        }
-        return boolList;
-      } else if (firstNonNull instanceof Byte) {
-        ArrayList<Byte> byteList = new ArrayList<>(array.length);
-        for (int i = 0; i < array.length; i++) {
-          byteList.add((Byte) array[i]);
-        }
-        return byteList;
-      } else if (firstNonNull instanceof Short) {
-        ArrayList<Short> shortList = new ArrayList<>(array.length);
-        for (int i = 0; i < array.length; i++) {
-          shortList.add((Short) array[i]);
-        }
-        return shortList;
-      } else if (firstNonNull instanceof Integer) {
-        ArrayList<Integer> integerList = new ArrayList<>(array.length);
-        for (int i = 0; i < array.length; i++) {
-          integerList.add((Integer) array[i]);
-        }
-        return integerList;
-      } else if (firstNonNull instanceof Long) {
-        ArrayList<Long> longList = new ArrayList<>(array.length);
-        for (int i = 0; i < array.length; i++) {
-          longList.add((Long) array[i]);
-        }
-        return longList;
-      } else if (firstNonNull instanceof Float) {
-        ArrayList<Float> floatList = new ArrayList<>(array.length);
-        for (int i = 0; i < array.length; i++) {
-          floatList.add((Float) array[i]);
-        }
-        return floatList;
-      } else if (firstNonNull instanceof Double) {
-        ArrayList<Double> doubleList = new ArrayList<>(array.length);
-        for (int i = 0; i < array.length; i++) {
-          doubleList.add((Double) array[i]);
-        }
-        return doubleList;
-      }
-    }
-    // Can't do anything.
-    return createListFromAssumedArray(array);
-  }
-
-  static Object findFirstNonNull(Object[] array) {
-    for (Object o : array) {
-      if (null != o) {
-        return o;
-      }
-    }
-    return null;
   }
 
   /**
@@ -498,7 +422,7 @@ public class AvaticaUtils {
   /**
    * Because an Array may have null entries, we will always return the non-primitive type variants.
    *
-   * @param type The component type of the array (based on {@link Types}).
+   * @param type The component type of the array (based on {@link java.sql.Types}).
    * @return The corresponding ColumnMetaData.Rep for the type.
    */
   public static ColumnMetaData.Rep getNonPrimitiveRep(SqlType type) {

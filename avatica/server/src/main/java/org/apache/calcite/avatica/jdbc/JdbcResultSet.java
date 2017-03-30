@@ -21,7 +21,6 @@ import org.apache.calcite.avatica.AvaticaUtils;
 import org.apache.calcite.avatica.ColumnMetaData;
 import org.apache.calcite.avatica.ColumnMetaData.ArrayType;
 import org.apache.calcite.avatica.ColumnMetaData.AvaticaType;
-import org.apache.calcite.avatica.ColumnMetaData.Rep;
 import org.apache.calcite.avatica.Meta;
 import org.apache.calcite.avatica.SqlType;
 import org.apache.calcite.avatica.util.DateTimeUtils;
@@ -160,18 +159,18 @@ class JdbcResultSet extends Meta.MetaResultSet {
           // component type of an Array from metadata, we have to update it as we're serializing
           // the ResultSet.
           final Array array = resultSet.getArray(j + 1);
+          // Only attempt to determine the component type for the array when non-null
           if (null != array && sig.isPresent()) {
-            // Only attempt to determine the component type for the array when non-null
             ColumnMetaData columnMetaData = sig.get().columns.get(j);
             ArrayType arrayType = (ArrayType) columnMetaData.type;
-
             SqlType componentSqlType = SqlType.valueOf(array.getBaseType());
+
             // Avatica Server will always return non-primitives to ensure nullable is guaranteed.
             ColumnMetaData.Rep rep = AvaticaUtils.getSerializedRep(componentSqlType);
             AvaticaType componentType = ColumnMetaData.scalar(array.getBaseType(),
                 array.getBaseTypeName(), rep);
             // Update the ArrayType from the Signature
-            arrayType.qualifyComponentType(array.getBaseTypeName(), componentType);
+            arrayType.updateComponentType(componentType);
 
             // We only need to update the array's type once.
             arrayOffsets.remove(j);
@@ -181,40 +180,6 @@ class JdbcResultSet extends Meta.MetaResultSet {
       rows.add(columns);
     }
     return new Meta.Frame(offset, done, rows);
-  }
-
-  static boolean isMultiDimensional(Array array) throws SQLException {
-    Object internalRep = array.getArray();
-    // I can't come up with any way to accurately ascertain whether or not an array is
-    // nested via JDBC alone. Instead, we'll guess based on the underlying structure and hope.
-    if (internalRep instanceof List) {
-      for (Object o : (List<?>) internalRep) {
-        if (isArrayLike(o)) {
-          return true;
-        }
-      }
-    } else if (internalRep instanceof Object[]) {
-      for (Object o : (Object[]) internalRep) {
-        if (isArrayLike(o)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  static boolean isArrayLike(Object o) {
-    // Bail out quick on null to save the extra comparisons
-    return null != o && (o instanceof Array || o instanceof List ||
-        o instanceof Object[] ||
-        o instanceof boolean[] ||
-        o instanceof short[] ||
-        o instanceof int[] ||
-        o instanceof char[] ||
-        o instanceof byte[] ||
-        o instanceof long[] ||
-        o instanceof float[] ||
-        o instanceof double[]);
   }
 
   private static Object getValue(ResultSet resultSet, int type, int j,

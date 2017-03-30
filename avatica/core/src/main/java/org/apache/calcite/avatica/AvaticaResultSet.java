@@ -213,7 +213,7 @@ public class AvaticaResultSet implements ResultSet, ArrayImpl.Factory {
   }
 
   public ResultSet create(ColumnMetaData.AvaticaType elementType,
-      Iterable<Object> iterable) {
+      Iterable<?> iterable) {
     throw new UnsupportedOperationException();
   }
 

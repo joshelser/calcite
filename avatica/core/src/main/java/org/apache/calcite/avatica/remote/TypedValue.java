@@ -215,9 +215,15 @@ public class TypedValue {
     }
     final Object serialValue;
     if (ColumnMetaData.Rep.ARRAY == rep) {
+      // Sanity check that we were given an Array
+      if (null != value && !(value instanceof Array)) {
+        throw new IllegalArgumentException("Provided Rep was ARRAY, but the value was "
+            + value.getClass());
+      }
+      final Array array = (Array) value;
       try {
-        SqlType type = SqlType.valueOf(((Array) value).getBaseType());
-        serialValue = jdbcToSerial(rep, value, calendar, type);
+        SqlType type = SqlType.valueOf(array.getBaseType());
+        serialValue = jdbcToSerial(rep, array, calendar, type);
         return new TypedValue(rep, AvaticaUtils.getNonPrimitiveRep(type), serialValue);
       } catch (SQLException e) {
         throw new RuntimeException("Could not extract Array component type", e);
@@ -340,8 +346,7 @@ public class TypedValue {
           // Protobuf can maintain the TypedValue hierarchy to simplify things
           array[i++] = ((TypedValue) o).toJdbc(calendar);
         } else {
-          // TODO try to unify these two code paths
-          // We can't do that trick with JSON, but we also can't get proper recursion...
+          // We can't get the above recursion with the JSON serialization
           array[i++] = serialToJdbc(componentRep, null, o, calendar);
         }
       }
@@ -490,6 +495,7 @@ public class TypedValue {
       Common.Rep protoArrayComponentRep) {
     for (Object element : list) {
       if (element instanceof List) {
+        // We have a list of lists: recursively build up the protobuf
         @SuppressWarnings("unchecked")
         List<Object> subList = (List<Object>) element;
         Common.TypedValue.Builder subListBuilder = Common.TypedValue.newBuilder();
@@ -499,6 +505,7 @@ public class TypedValue {
             protoArrayComponentRep);
         builder.addArrayValue(protoSubList);
       } else {
+        // We have a list of "scalars", just serialize the value
         Common.TypedValue.Builder elementBuilder = Common.TypedValue.newBuilder();
         if (null == element) {
           writeToProtoWithType(elementBuilder, null, Common.Rep.NULL);
@@ -815,7 +822,6 @@ public class TypedValue {
       return o;
     }
     return serialToJdbc(Rep.fromProto(protoValue.getType()), null, o, calendar);
-//    return protoSerialToJdbc(protoValue.getType(), o, Objects.requireNonNull(calendar));
   }
 
   @Override public int hashCode() {

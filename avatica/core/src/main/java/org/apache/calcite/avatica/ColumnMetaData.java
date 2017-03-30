@@ -451,7 +451,7 @@ public class ColumnMetaData {
       @JsonSubTypes.Type(value = ArrayType.class, name = "array") })
   public static class AvaticaType {
     public final int id;
-    String name;
+    public final String name;
 
     /** The type of the field that holds the value. Not a JDBC property. */
     public final Rep rep;
@@ -580,8 +580,12 @@ public class ColumnMetaData {
       this.component = component;
     }
 
-    public void qualifyComponentType(String typeName, AvaticaType component) {
-      this.name = Objects.requireNonNull(typeName);
+    /**
+     * Updates the component of {@code this} to the given value. This is necessary to provide as
+     * accurate-as-possible of an {@code ArrayType} in the {@code Signature}. It cannot be done
+     * at initial construction of this object.
+     */
+    public void updateComponentType(AvaticaType component) {
       this.component = Objects.requireNonNull(component);
     }
 
