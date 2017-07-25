@@ -157,6 +157,26 @@ public class OsAdapterTest {
     sql(q).returnsUnordered("author=Julian Hyde <julianhyde@gmail.com>");
   }
 
+  @Test public void testVmstat() {
+    sql("select * from vmstat")
+        .returns(
+            new Function<ResultSet, Void>() {
+              public Void apply(ResultSet r) {
+                try {
+                  assertThat(r.next(), is(true));
+                  final int c = r.getMetaData().getColumnCount();
+                  for (int i = 0; i < c; i++) {
+                    assertThat(r.getLong(i + 1), notNullValue());
+                    assertThat(r.wasNull(), is(false));
+                  }
+                  return null;
+                } catch (SQLException e) {
+                  throw new RuntimeException(e);
+                }
+              }
+            });
+  }
+
   @Test public void testStdin() throws SQLException {
     try (Hook.Closeable ignore = Hook.STANDARD_STREAMS.addThread(
         new Function<Holder<Object[]>, Void>() {
